@@ -2,6 +2,7 @@ from pytracking.tracker.base import BaseTracker
 import torch
 import torch.nn.functional as F
 import math
+import time
 from pytracking import complex, dcf, fourier, TensorList
 from pytracking.libs.tensorlist import tensor_operation
 from pytracking.features.preprocessing import numpy_to_torch
@@ -38,6 +39,7 @@ class ECO(BaseTracker):
 
         # Get feature specific params
         self.fparams = self.params.features.get_fparams('feature_params')
+        tic = time.time()
 
         # Get position and size
         self.pos = torch.Tensor([state[1] + (state[3] - 1)/2, state[0] + (state[2] - 1)/2])
@@ -175,6 +177,8 @@ class ECO(BaseTracker):
         self.filter_optimizer.run(self.params.post_init_CG_iter)
 
         self.symmetrize_filter()
+        out = {'time': time.time() - tic}
+        return out
 
 
 

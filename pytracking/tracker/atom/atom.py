@@ -249,7 +249,7 @@ class ATOM(BaseTracker):
                 update_scale_flag = self.params.get('update_scale_when_uncertain', True) or flag != 'uncertain'
                 if self.params.get('use_classifier', True):
                     self.update_state(sample_pos + translation_vec)
-                self.refine_target_box(sample_pos, sample_scales[scale_ind], scale_ind, update_scale_flag)
+                self.refine_target_box(sample_pos, sample_scales[scale_ind.cpu()], scale_ind, update_scale_flag)
             elif self.params.get('use_classifier', True):
                 self.update_state(sample_pos + translation_vec, sample_scales[scale_ind])
 
@@ -276,7 +276,7 @@ class ATOM(BaseTracker):
             train_x = TensorList([x[scale_ind:scale_ind+1, ...] for x in test_x])
 
             # Create label for sample
-            train_y = self.get_label_function(sample_pos, sample_scales[scale_ind])
+            train_y = self.get_label_function(sample_pos, sample_scales[scale_ind.cpu()])
 
             # Update memory
             self.update_memory(train_x, train_y, learning_rate)
